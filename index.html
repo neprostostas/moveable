@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="index, follow">
+        <meta name="language" content="English">
+        <meta name="revisit-after" content="1 days">
+        <meta name="author" content="neprostostas">
+        <title>Movable div</title>
+        <style>
+            html {
+                background-color: #f9faff;
+            }
+
+            h1 {
+                margin: 0;
+            }
+
+            .title {
+                padding: 40px 0 10px 0;
+                text-align: center;
+                font-size: 36px;
+                font-weight: 700;
+                background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet, red, orange, yellow, green, blue, indigo, violet, red, orange, yellow, green, blue, indigo, violet);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .container {
+                font-family: 'Lexend', sans-serif;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px 40px;
+            }
+
+            .wrapper {
+                padding: 10px;
+                margin: 0 auto;
+                display: grid;
+                gap: 5px;
+            }
+
+            .wrapper > div {
+                font-weight: 700;
+                font-size: 20px;
+                border: 2px solid #fff;
+                border-radius: 15px;
+                padding: 1em;
+                color: #fff;
+                transition: .3s all ease-in-out;
+            }
+
+            .wrapper > div:hover {
+                position: relative;
+                top: 1px;
+                color: #000;
+                transition: .3s all ease-in-out;
+            }
+
+            .box {
+                width: 200px;
+                height: 100px;
+                background-color: #f1f1f1;
+                border: 1px solid #ccc;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+                cursor: pointer;
+                margin: 0 auto;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="title">Movable div</h1>
+            <div class="wrapper"></div>
+        </div>
+        <script>
+            let divs = [];
+
+            const colors = [
+                "#6528F7",
+                "#A076F9",
+                "#D7BBF5",
+                "#EDE4FF",
+                "#4A55A2",
+                "#7895CB",
+                "#C5DFF8"
+            ];
+
+            function moveDivToFirst(event) {
+                const target = event.target;
+                const currentIndex = divs.indexOf(target);
+                if (currentIndex > 0) {
+                    // Move the clicked div to the first position in the array
+                    divs.splice(currentIndex, 1);
+                    divs.unshift(target);
+                } else if (currentIndex === -1) {
+                    // If the clicked div is not in the array, add it to the first position
+                    divs.unshift(target);
+                } else {
+                    // If the clicked div is already at the first position, move it back to its original index
+                    const originalIndex = target.dataset.originalIndex;
+                    divs.splice(0, 1);
+                    divs.splice(originalIndex, 0, target);
+                }
+                rearrangeDivs();
+            }
+
+            function rearrangeDivs() {
+                // Remove all divs from the wrapper div
+                const wrapper = document.querySelector(".wrapper");
+                while (wrapper.firstChild) {
+                    wrapper.removeChild(wrapper.firstChild);
+                }
+
+                // Append all divs from the array back to the wrapper div
+                divs.forEach((div, index) => {
+                    div.style.order = index;
+                    div.dataset.originalIndex = index;
+                    wrapper.appendChild(div);
+                });
+            }
+
+            function createDivs() {
+                const colorCount = colors.length;
+                for (let i = 1; i <= 100; i++) {
+                    const div = document.createElement("div");
+                    div.classList.add("box");
+                    div.textContent = "div" + i;
+
+                    // Set background color for each box based on the color array
+                    div.style.backgroundColor = colors[(i - 1) % colorCount];
+
+                    div.addEventListener("click", moveDivToFirst);
+                    divs.push(div);
+                }
+                rearrangeDivs();
+            }
+
+
+            window.onload = createDivs;
+        </script>
+    </body>
+</html>
